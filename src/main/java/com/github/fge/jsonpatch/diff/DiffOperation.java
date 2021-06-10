@@ -153,7 +153,7 @@ final class DiffOperation
             @Override
             JsonPatchOperation toOperation(final DiffOperation op)
             {
-                return new ReplaceOperation(op.from, op.value);
+                return new ReplaceOperation(op.from, op.value, op.oldValue);
             }
         },
         ;

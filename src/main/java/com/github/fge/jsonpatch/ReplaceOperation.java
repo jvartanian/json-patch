@@ -19,12 +19,15 @@
 
 package com.github.fge.jsonpatch;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
+
+import java.io.IOException;
 
 /**
  * JSON Patch {@code replace} operation
@@ -38,14 +41,33 @@ import com.github.fge.jackson.jsonpointer.JsonPointer;
 public final class ReplaceOperation
     extends PathValueOperation
 {
-    @JsonCreator
-    public ReplaceOperation(@JsonProperty("path") final JsonPointer path,
-        @JsonProperty("value") final JsonNode value)
+
+	private final JsonNode oldValue;
+
+    public ReplaceOperation(final JsonPointer path, final JsonNode value, final JsonNode oldValue)
     {
         super("replace", path, value);
+        this.oldValue = oldValue;
     }
 
-    @Override
+	@Override
+	public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException {
+		jgen.writeStartObject();
+		jgen.writeStringField("op", op);
+		jgen.writeStringField("path", path.toString());
+		jgen.writeFieldName("value");
+		jgen.writeTree(value);
+		jgen.writeFieldName("oldValue");
+		jgen.writeTree(oldValue);
+		jgen.writeEndObject();
+	}
+
+	@Override
+	public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException {
+		serialize(jgen, provider);
+	}
+
+	@Override
     public JsonNode apply(final JsonNode node)
         throws JsonPatchException
     {

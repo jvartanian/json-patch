@@ -21,7 +21,7 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-            url "http://repo.springsource.org/plugins-release";
+            url "https://repo.springsource.org/plugins-release";
         }
     }
     dependencies {
@@ -117,24 +117,9 @@ allprojects {
     }
 }
 
-/*
- * Javadoc: we need to tell where the overview.html is, it will not pick it up
- * automatically...
- */
-
-//javadoc {
-//    options.overview = "src/main/java/overview.html";
-//}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc";
-    from javadoc.destinationDir;
-}
-
 artifacts {
     archives jar;
     archives sourcesJar;
-    archives javadocJar;
 }
 
 wrapper {
