@@ -32,6 +32,7 @@ buildscript {
 
 plugins {
     id("net.ltgt.errorprone") version "0.8.1" apply false
+	id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 configure(allprojects) {
@@ -75,6 +76,14 @@ repositories {
             }
         }
     }
+}
+
+shadowJar {
+	dependencies {
+		exclude(dependency {
+			it.moduleGroup.startsWith("com.fasterxml.jackson")
+		})
+	}
 }
 
 /*
